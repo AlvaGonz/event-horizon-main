@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Constructor.Satellites;
 using Constructor.Ships;
 using GameDatabase;
@@ -11,37 +12,56 @@ namespace Game.Exploration
 {
     public class EnemyShipBuilder : IEnemyShipBuilder
     {
+        private readonly ShipBuildParameters _parameters;
+        private readonly IDatabase _database;
+        private readonly IShipBuildGenerator _generator;
+
+        // Backward compatibility constructor
         public EnemyShipBuilder(ItemId<ShipBuild> id, IDatabase database, int level, int seed, bool randomizeColor = false, bool allowSatellites = true)
+            : this(
+                ShipBuildParameters.Default()
+                    .WithLevel(level)
+                    .WithSeed(seed)
+                    .WithSpecificShipId(id.Value)
+                    .WithRandomizeColor(randomizeColor)
+                    .WithAllowSatellites(allowSatellites),
+                database,
+                new ParameterizedShipBuildGenerator())
         {
+        }
+
+        // New constructor for injection
+        public EnemyShipBuilder(ShipBuildParameters parameters, IDatabase database, IShipBuildGenerator generator = null)
+        {
+            _parameters = parameters;
             _database = database;
-            _shipId = id.Value;
-            _level = level;
-            _seed = seed;
-            _allowSatellites = allowSatellites;
-            _randomizeColor = randomizeColor;
+            _generator = generator ?? new ParameterizedShipBuildGenerator();
         }
 
         public Combat.Component.Ship.Ship Build(Combat.Factory.ShipFactory shipFactory, Combat.Factory.SpaceObjectFactory objectFactory, Vector2 position, float rotation)
         {
             var model = CreateShip();
             var spec = model.CreateBuilder().Build(_database.ShipSettings);
-            var ship = shipFactory.CreateEnemyShip(spec, position, rotation, Maths.Distance.AiLevel(_level));
+            var ship = shipFactory.CreateEnemyShip(spec, position, rotation, Maths.Distance.AiLevel(_parameters.Level));
             return ship;
         }
 
         private IShip CreateShip()
         {
-            var random = new System.Random(_seed);
+            var random = new System.Random(_parameters.Seed);
 
-            var build = _database.GetShipBuild(new ItemId<ShipBuild>(_shipId));
+            // Use generator to get the build
+            var build = _generator.Generate(_parameters, _database);
+            
             var ship = new EnemyShip(build, _database);
 
-            var shipLevel = _database.GalaxySettings.EnemyLevel(_level);
+            var shipLevel = _database.GalaxySettings.EnemyLevel(_parameters.Level);
             shipLevel -= random.Next(shipLevel/3);
             ship.Experience = Maths.Experience.FromLevel(shipLevel);
 
-            var satelliteClass = Maths.Distance.MaxShipClass(_level);
-            if (_allowSatellites && ship.Model.ShipType == ShipType.Common && satelliteClass != DifficultyClass.Default)
+            var satelliteClass = Maths.Distance.MaxShipClass(_parameters.Level);
+            // Check implicit parameter about common ships and satellites
+            if (_parameters.AllowSatellites && ship.Model.ShipType == ShipType.Common && satelliteClass != DifficultyClass.Default)
             {
                 var satellites = _database.SatelliteBuildList.LimitClass(satelliteClass).SuitableFor(build.Ship);
                 if (satellites.Any())
@@ -53,7 +73,7 @@ namespace Game.Exploration
                 }
             }
 
-            if (_randomizeColor)
+            if (_parameters.RandomizeColor)
             {
                 ship.ColorScheme.Type = ShipColorScheme.SchemeType.Hsv;
                 ship.ColorScheme.Hue = random.NextFloat();
@@ -61,12 +81,5 @@ namespace Game.Exploration
 
             return ship;
         }
-
-        private readonly bool _randomizeColor;
-        private readonly int _seed;
-        private readonly int _shipId;
-        private readonly int _level;
-        private readonly bool _allowSatellites;
-        private readonly IDatabase _database;
     }
 }

@@ -1,10 +1,10 @@
 {
     "name": "CommonComponents",
     "rootNamespace": "",
-    "references": [
         "Zenject",
         "AppConfiguration",
-        "Utilites"
+        "Utilites",
+        "SecurityStub"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

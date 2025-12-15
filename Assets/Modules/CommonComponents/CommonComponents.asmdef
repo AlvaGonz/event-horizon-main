@@ -1,6 +1,7 @@
 {
     "name": "CommonComponents",
     "rootNamespace": "",
+    "references": [
         "Zenject",
         "AppConfiguration",
         "Utilites",

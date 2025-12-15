@@ -5,6 +5,7 @@
   <Project Path="BattleSimulator.csproj" />
   <Project Path="Assembly-CSharp.csproj" />
   <Project Path="UniRx.csproj" />
+  <Project Path="CommonComponents.csproj" />
   <Project Path="Zenject-ReflectionBaking-Editor.csproj" />
   <Project Path="GameSession.csproj" />
   <Project Path="Quests.csproj" />

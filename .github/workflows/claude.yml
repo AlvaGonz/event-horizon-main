@@ -1,0 +1,320 @@
+---
+# Claude Configuration for Event Horizon Project
+# Stack: Next.js 14 | TypeScript | Antigravity Gemini 3
+# Last Updated: December 15, 2025
+
+project:
+  name: "Event Horizon - Water Distribution Management SaaS"
+  description: "Real-time SaaS platform for water purification PYMES in Dominican Republic"
+  version: "1.0.0"
+  repository: "github.com/AlvaGonz/event-horizon-main"
+  branch: "Develop"
+
+ai_model:
+  name: "Antigravity Gemini 3"
+  capabilities:
+    - "Advanced reasoning for complex algorithms"
+    - "Code generation with full type safety"
+    - "Security analysis and audit"
+    - "Performance optimization recommendations"
+    - "Test suite generation"
+  integration: "Cursor IDE + API fallback"
+
+tech_stack:
+  frontend:
+    framework: "Next.js 14"
+    language: "TypeScript (strict mode)"
+    styling: "Tailwind CSS 3.4+"
+    state_management:
+      server: "TanStack Query v5"
+      client: "Zustand"
+      async: "React Server Components"
+    ui_components:
+      library: "@event-horizon/ui"
+      icons: "React Icons"
+      forms: "React Hook Form + Zod"
+  backend:
+    runtime: "Node.js 20+"
+    api_framework: "Next.js API Routes"
+    orm: "Prisma 5.x"
+    authentication: "NextAuth.js v5"
+    validation: "Zod"
+    realtime: "Socket.io / Vercel AI SDK"
+  database:
+    primary: "PostgreSQL 15+ (Supabase)"
+    cache: "Redis (Upstash)"
+    search: "Typesense (optional)"
+    backups: "Automated daily"
+  devops:
+    deployment: "Vercel Production / AWS Staging"
+    ci_cd: "GitHub Actions"
+    monitoring: "Sentry + PostHog"
+    analytics: "Google Analytics 4"
+  development:
+    package_manager: "pnpm"
+    testing:
+      unit: "Vitest + React Testing Library"
+      e2e: "Playwright"
+      coverage: "80%+ target"
+    linting: "ESLint (next/core-web-vitals)"
+    formatting: "Prettier (2-space)"
+    documentation: "TypeDoc + Storybook"
+
+project_structure:
+  backend:
+    - "apps/web/app/api/[module]/route.ts"
+    - "lib/api.ts - Centralized API client"
+    - "lib/auth.ts - NextAuth configuration"
+    - "lib/db.ts - Prisma client singleton"
+  frontend:
+    - "components/atoms/ - Basic UI units"
+    - "components/molecules/ - Compound components"
+    - "components/organisms/ - Page sections"
+    - "hooks/ - Custom React hooks"
+    - "lib/ - Utilities and helpers"
+  database:
+    - "prisma/schema.prisma - Data model"
+    - "prisma/migrations/ - Version control"
+
+code_standards:
+  typescript:
+    strict: true
+    no_any: "Enforce (ESLint rule)"
+    imports: "Explicit file extensions (.ts, .tsx)"
+    enums: "Use string enums for type safety"
+  react:
+    components: "Functional + TypeScript"
+    naming: "PascalCase for components"
+    hooks: "Custom hooks for shared logic"
+    performance: "useMemo for expensive calculations"
+    testing: "Render + userEvent patterns"
+  api_design:
+    response_format: |
+      {
+        success: boolean,
+        data?: T,
+        error?: { code: string, message: string },
+        timestamp: string
+      }
+    validation: "Zod schemas required"
+    authentication: "Bearer token (JWT)"
+    rate_limiting: "100 req/min public, 1000 req/min authenticated"
+  naming_conventions:
+    files: "kebab-case"
+    folders: "kebab-case"
+    components: "PascalCase"
+    hooks: "camelCase (useFeature)"
+    constants: "UPPER_SNAKE_CASE"
+    types: "PascalCase (Type suffix optional)"
+    interfaces: "PascalCase (I prefix optional)"
+
+feature_modules:
+  authentication:
+    provider: "NextAuth.js"
+    strategies: ["Google OAuth", "Email/Password"]
+    mfa: "TOTP (optional for premium)"
+    session_duration: "30 days"
+  order_management:
+    realtime: "WebSocket + Socket.io"
+    states: ["pending", "confirmed", "in_delivery", "delivered", "cancelled"]
+    notifications: "Email + Push + In-app"
+  inventory_control:
+    sku_system: "Multi-state (Full/Empty/Liquid)"
+    tracking: "Real-time QR code validation"
+    alerts: "Automatic low stock notifications"
+  route_optimization:
+    algorithm: "Genetic algorithm (route solver)"
+    data_source: "Google Maps API"
+    real_time_updates: "WebSocket for live tracking"
+  analytics_dashboard:
+    kpis: ["Sales by period", "Route efficiency", "Inventory turnover"]
+    export: "PDF reports + CSV"
+    scheduling: "Automated daily/weekly reports"
+
+cursor_commands:
+  feature_generation: "@Gemini3 Generate [feature]"
+  code_review: "@Gemini3 Review code for [concern]"
+  testing: "@Gemini3 Generate tests for [module]"
+  documentation: "@Gemini3 Create API docs for [endpoint]"
+  refactoring: "@Gemini3 Refactor for [objective]"
+
+git_workflow:
+  branches:
+    main: "Production (auto-deploy on release)"
+    staging: "Pre-production QA"
+    develop: "Integration branch (this)"
+    feature: "feature/[ticket-id]-description"
+    bugfix: "bugfix/[ticket-id]-description"
+  commit_convention:
+    format: "[TYPE]: [DESCRIPTION] (#ticket-id)"
+    types: ["feat", "fix", "docs", "style", "refactor", "test", "chore"]
+  code_review:
+    required_approvals: 2
+    enforce_conversation: true
+    dismiss_stale_reviews: true
+
+testing_strategy:
+  unit:
+    path: "**/*.test.ts"
+    framework: "Vitest"
+    coverage_target: 80%
+  integration:
+    path: "**/*.integration.test.ts"
+    scenarios: ["API endpoints", "Database queries"]
+  e2e:
+    path: "e2e/specs/**/*.spec.ts"
+    framework: "Playwright"
+    critical_paths: ["Auth flow", "Order creation", "Route assignment"]
+
+security_checklist:
+  secrets: "Never commit .env (use .env.example)"
+  validation: "Zod on all API inputs"
+  authentication: "NextAuth.js + JWT"
+  authorization: "RBAC middleware"
+  ssl: "HTTPS only in production"
+  cors: "Whitelist trusted origins"
+  rate_limiting: "express-rate-limit middleware"
+  dependency_audit: "npm audit + Dependabot"
+
+performance_targets:
+  first_contentful_paint: "<1.5s"
+  largest_contentful_paint: "<2.5s"
+  cumulative_layout_shift: "<0.1"
+  main_bundle_size: "<200KB (gzip)"
+  api_response_time: "<300ms (p95)"
+  database_query_time: "<100ms (p95)"
+  lighthouse_score: ">90"
+
+monitoring:
+  sentry:
+    enabled: true
+    environment: "production"
+    sample_rate: 1.0
+  posthog:
+    analytics: true
+    custom_events: ["route_optimized", "order_completed"]
+  vercel_analytics:
+    enabled: true
+    web_vitals: true
+
+environment_variables:
+  required:
+    - "NEXTAUTH_SECRET"
+    - "NEXTAUTH_URL"
+    - "DATABASE_URL"
+    - "REDIS_URL"
+    - "GOOGLE_MAPS_API_KEY"
+    - "GEMINI_API_KEY"
+    - "SENTRY_DSN"
+  optional:
+    - "SMTP_HOST (for email)"
+    - "TWILIO_ACCOUNT_SID (for SMS)"
+
+deployment:
+  preview: "Vercel (automatic on PR)"
+  staging: "AWS EC2 (manual trigger)"
+  production: "Vercel (on main branch)"
+  database_migrations: "Prisma migrate on deploy"
+  secrets_rotation: "Quarterly review"
+
+documentation:
+  api_spec: "OpenAPI 3.0 (auto-generated)"
+  component_library: "Storybook 7"
+  architecture: "Architecture Decision Records (ADRs)"
+  runbook: "Incident response playbooks"
+
+team_workflows:
+  standups: "Daily (mention Cursor insights)"
+  code_reviews: "Within 24 hours"
+  pair_programming: "Required for complex features"
+  knowledge_sharing: "Bi-weekly tech talks"
+
+antipatterns_to_avoid:
+  - "Prop drilling (use context + hooks)"
+  - "Untyped functions (no implicit any)"
+  - "Direct DOM queries (use React Testing Library)"
+  - "Magic strings (extract to constants)"
+  - "God components (keep <300 lines)"
+  - "Premature optimization (measure first)"
+  - "Copy-paste code (extract to utilities)"
+
+tools_and_extensions:
+  cursor_ai:
+    model: "Antigravity Gemini 3"
+    autocomplete: true
+    features: ["chat", "generate", "edit"]
+  vscode_extensions:
+    - "ESLint"
+    - "Prettier"
+    - "TypeScript Vue Plugin"
+    - "Prisma"
+    - "Tailwind CSS IntelliSense"
+  local_setup:
+    docker: "postgres:15 + redis:7"
+    commands:
+      - "pnpm install"
+      - "pnpm prisma generate"
+      - "pnpm dev"
+
+ai_dev_workflow:
+  phase_1_design:
+    - "Write feature description"
+    - "Define types and interfaces"
+    - "Create component hierarchy diagram"
+  phase_2_implementation:
+    - "Ask Gemini 3 to generate components"
+    - "Review for type safety"
+    - "Implement error handling"
+  phase_3_testing:
+    - "Ask Gemini 3 to generate tests"
+    - "Achieve 80%+ coverage"
+    - "Test edge cases"
+  phase_4_documentation:
+    - "Ask Gemini 3 to document API"
+    - "Update Storybook"
+    - "Create usage examples"
+
+success_metrics:
+  code_quality:
+    - "TypeScript strict mode: 100%"
+    - "ESLint pass rate: 100%"
+    - "Test coverage: >80%"
+    - "Bundle size: <200KB (gzip)"
+  performance:
+    - "Lighthouse score: >90"
+    - "API p95 response: <300ms"
+    - "DB p95 query: <100ms"
+  delivery:
+    - "Feature cycle time: <5 days"
+    - "Deployment frequency: >2x per week"
+    - "Production issues: <2 per sprint"
+    - "Code review SLA: 24 hours"
+
+# Model-Specific Prompting Patterns
+gemini_3_optimization:
+  reasoning_queries:
+    - "Analyze this algorithm for optimization opportunities"
+    - "What are the time/space complexity implications?"
+    - "Design a solution for [complex requirement]"
+  code_generation:
+    - "Generate complete implementation including types and tests"
+    - "Ensure TypeScript strict mode compliance"
+    - "Include error handling and validation"
+  security_analysis:
+    - "Audit this endpoint for security vulnerabilities"
+    - "Suggest database query optimizations"
+    - "Review authentication flow"
+
+release_process:
+  version_bumping: "Semantic versioning (MAJOR.MINOR.PATCH)"
+  changelog: "Keep CHANGELOG.md updated"
+  tagging: "Git tags for releases (v1.2.3)"
+  rollback_plan: "Documented in RUNBOOK.md"
+
+---
+
+# EOF: claude.yml
+# This configuration enables seamless integration between:
+# - Cursor IDE with Antigravity Gemini 3
+# - Event Horizon Project (Develop branch)
+# - Production-ready TypeScript/Next.js workflow

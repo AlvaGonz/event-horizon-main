@@ -1,0 +1,266 @@
+# AI DEV Cursor Rules - Antigravity Gemini 3 + Event Horizon
+
+[STACK: Next.js 14+ | TypeScript | Tailwind CSS | Vercel/AWS | PostgreSQL/Supabase | Real-time WebSockets | Gemini 3 API]
+
+## 🎯 PROJECT CONTEXT
+
+**Project:** Event Horizon (Develop Branch)  
+**AI Model:** Antigravity Gemini 3 (Advanced Reasoning + Code Generation)  
+**Tech Foundation:** Full-Stack TypeScript/Next.js  
+**Deployment:** Production-ready SaaS Infrastructure  
+
+---
+
+## 📋 MANDATORY ARCHITECTURE PRINCIPLES
+
+### 1. Type Safety & Compiler-First Development
+- **ALWAYS** use strict TypeScript (`strict: true` in tsconfig)
+- Define interfaces before implementation
+- Use discriminated unions for error handling
+- Leverage Zod for runtime validation on API boundaries
+
+### 2. Component-Driven Architecture
+- Atomic Design: Atoms → Molecules → Organisms → Templates
+- Composable over monolithic
+- Props should be typed with `React.FC<Props>` pattern
+- Use custom hooks for shared logic (never props drilling)
+
+### 3. API Design Standards
+- REST endpoints follow RESTful conventions
+- All API responses wrapped in standardized response schema:
+  ```typescript
+  interface ApiResponse<T> {
+    success: boolean;
+    data?: T;
+    error?: { code: string; message: string };
+    timestamp: string;
+  }
+  ```
+- Use middleware for auth, logging, rate-limiting
+- Handle errors with consistent HTTP status codes
+
+### 4. State Management
+- Client: TanStack Query (React Query) for server state
+- Local: Zustand atoms for UI state
+- Never prop drill; always use context + custom hooks
+- Suspense boundaries for async data loading
+
+### 5. Database & ORM
+- Prisma ORM with migrations tracked in git
+- Schema-first design with strict foreign keys
+- Indexes on high-traffic columns
+- Soft deletes via `deletedAt` timestamps
+
+---
+
+## 🚀 ANTIGRAVITY GEMINI 3 INTEGRATION PATTERNS
+
+### Code Generation Prompts
+When working with Gemini 3, structure requests as:
+
+1. **Context**: "We're building [feature] in a Next.js 14 SaaS with TypeScript"
+2. **Requirements**: List specific constraints (e.g., "Must support offline-first", "Needs real-time sync")
+3. **Format**: Request code in TypeScript with full types
+4. **Output**: Ask for: types → components → hooks → tests
+
+### Cursor Command Template
+```
+@Gemini3 Generate [feature]
+
+Context: Event Horizon - Water Distribution Management SaaS
+Stack: Next.js 14 + TypeScript + Tailwind + TanStack Query
+Feature: [Name]
+Requirements:
+- [Requirement 1]
+- [Requirement 2]
+
+Output format:
+1. TypeScript interfaces/types
+2. React component(s)
+3. Custom hook (if applicable)
+4. Unit test (vitest)
+```
+
+---
+
+## 📁 PROJECT STRUCTURE
+
+```
+event-horizon/
+├── apps/
+│   ├── web/                    # Next.js frontend
+│   │   ├── app/
+│   │   │   ├── (dashboard)/    # Protected routes
+│   │   │   ├── (auth)/         # Auth routes
+│   │   │   └── api/            # API routes
+│   │   ├── components/
+│   │   │   ├── atoms/          # Smallest UI units
+│   │   │   ├── molecules/      # Compound components
+│   │   │   ├── organisms/      # Page sections
+│   │   │   └── icons/          # Icon library
+│   │   ├── hooks/              # Custom React hooks
+│   │   ├── lib/                # Utilities & helpers
+│   │   └── styles/             # Global CSS + Tailwind
+│   └── api/                    # Node/Express backend (optional)
+├── packages/
+│   ├── shared/                 # Shared types & utilities
+│   ├── ui/                     # Reusable component library
+│   └── database/               # Prisma schema & migrations
+├── prisma/
+│   ├── schema.prisma           # Data model
+│   └── migrations/
+├── .env.example                # Environment template
+└── cursor.rules               # THIS FILE
+```
+
+---
+
+## 💻 CURSOR-SPECIFIC WORKFLOW
+
+### Pre-Generation Checklist
+- [ ] Review existing component patterns in `components/`
+- [ ] Check if similar feature already exists
+- [ ] Verify TypeScript types are exported from `shared/`
+- [ ] Confirm API endpoint structure in `lib/api.ts`
+
+### During Generation
+- Use `@codebase` references to understand patterns
+- Leverage `@web` to search existing Next.js routes
+- Reference `@database` for schema understanding
+
+### Post-Generation
+- Run `npm run lint` to catch ESLint issues
+- Run `npm run type-check` for TS errors
+- Add unit tests immediately
+- Update Storybook if new component
+
+---
+
+## 🔐 SECURITY BEST PRACTICES
+
+1. **Never commit secrets** - Use `.env.local` (in .gitignore)
+2. **API validation** - Always validate request bodies with Zod
+3. **Auth middleware** - Verify JWT tokens on protected routes
+4. **Rate limiting** - Use `express-rate-limit` on public endpoints
+5. **SQL injection** - Always use parameterized queries (Prisma handles this)
+6. **CORS** - Whitelist only trusted origins
+7. **HTTPS only** - Enforce in production middleware
+
+---
+
+## 📊 PERFORMANCE GUIDELINES
+
+- **Image optimization**: Use Next.js Image component always
+- **Bundle size**: Keep main bundle < 200KB (gzip)
+- **Lazy loading**: Code-split routes with `dynamic()` import
+- **Caching**: Set appropriate Cache-Control headers on CDN
+- **Database**: Use connection pooling (Prisma handles with PrismaClient)
+- **Monitoring**: Add Sentry for error tracking in production
+
+---
+
+## ✅ CODE QUALITY STANDARDS
+
+### Linting & Formatting
+- **ESLint**: Extends `next/core-web-vitals`
+- **Prettier**: 2-space indentation, trailing commas
+- **TypeScript**: Strict mode, no `any` types
+
+### Testing
+- **Unit**: Vitest for utilities, hooks
+- **Component**: React Testing Library for UI
+- **E2E**: Playwright for critical user flows
+- **Coverage target**: 80% for source code
+
+### Git Commit Convention
+```
+feat: Add user dashboard route
+fix: Correct order calculation logic
+docs: Update API documentation
+style: Reformat component markup
+refactor: Extract common validation
+test: Add route protection tests
+chore: Update dependencies
+```
+
+---
+
+## 🔄 WORKFLOW WITH GEMINI 3
+
+### For Feature Implementation:
+1. Write feature description as comment block
+2. Define types first (interfaces, enums, Zod schemas)
+3. Describe component hierarchy as JSDoc
+4. Ask Gemini 3 to generate implementation
+5. Review generated code for:
+   - Type safety compliance
+   - Security implications
+   - Performance considerations
+   - Testing completeness
+
+### For Bug Fixes:
+1. Describe bug behavior and expected outcome
+2. Provide relevant code context
+3. Ask Gemini 3 to identify root cause
+4. Request fix with types preserved
+5. Generate test case to prevent regression
+
+### For Refactoring:
+1. Identify code smell (duplication, complexity)
+2. Request extraction/simplification
+3. Ensure no behavior changes
+4. Add tests to verify refactoring
+
+---
+
+## 📚 DOCUMENTATION STANDARDS
+
+- **README.md**: Project overview + setup instructions
+- **ARCHITECTURE.md**: System design & decision rationale
+- **API.md**: Endpoint documentation (OpenAPI schema)
+- **Components.md**: Storybook + component usage guide
+- **CODE_STYLE.md**: Team coding conventions
+
+---
+
+## 🛠️ DEBUGGING & TROUBLESHOOTING
+
+### Common Patterns:
+- **Type errors**: Check `shared/types.ts` for exported interfaces
+- **Route 404**: Verify file location matches Next.js convention (app router)
+- **API failure**: Check `.env.local` has required variables
+- **Styling issues**: Verify Tailwind config includes content paths
+- **Build failures**: Clear `.next` folder and `node_modules`
+
+### Cursor Debug Commands:
+```
+@terminal npm run dev          # Start dev server
+@terminal npm run type-check   # Full TS check
+@terminal npm run lint         # ESLint + Prettier
+@terminal npm run test         # Run Vitest suite
+```
+
+---
+
+## 🎯 ANTIGRAVITY-SPECIFIC ENHANCEMENTS
+
+- **Reasoning Model**: Leverage for complex algorithm design (route optimization, analytics)
+- **Code Quality**: Use for security audits and performance analysis
+- **Documentation**: Generate API docs from code automatically
+- **Testing**: Generate comprehensive test suites for critical paths
+
+---
+
+## 📞 TEAM GUIDELINES
+
+- All decisions documented in git commit messages
+- Breaking changes require team discussion (documented in commits)
+- Code reviews focus on types, security, and performance
+- Pair programming for complex features
+- Daily standups reference Cursor insights
+
+---
+
+**Last Updated**: December 15, 2025  
+**Model Version**: Antigravity Gemini 3  
+**Framework Version**: Next.js 14+

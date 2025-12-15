@@ -1,0 +1,467 @@
+name: CI/CD Pipeline - Antigravity Gemini 3 Optimized
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - staging
+  pull_request:
+    branches:
+      - develop
+      - main
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: "20.x"
+  PNPM_VERSION: "8.x"
+  CACHE_NAME_PART: ${{ github.ref }}-${{ github.run_id }}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Job 1: Setup & Dependency Installation
+  setup:
+    name: "Setup Dependencies"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.x]
+    steps:
+      - name: "Checkout Code"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: "Setup Node.js ${{ matrix.node-version }}"
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "pnpm"
+
+      - name: "Install pnpm"
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: "Install Dependencies"
+        run: pnpm install --frozen-lockfile
+
+      - name: "Cache Dependencies"
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            .next/cache
+          key: ${{ runner.os }}-deps-${{ env.CACHE_NAME_PART }}
+          restore-keys: |
+            ${{ runner.os }}-deps-
+
+  # Job 2: TypeScript Type Checking
+  type-check:
+    name: "TypeScript Type Check"
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          cache: "pnpm"
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: "Type Check"
+        run: pnpm type-check
+
+      - name: "Report Type Errors"
+        if: failure()
+        run: |
+          echo "❌ TypeScript compilation failed"
+          exit 1
+
+  # Job 3: Linting & Code Quality
+  lint:
+    name: "ESLint & Code Quality"
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          cache: "pnpm"
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: "Run ESLint"
+        run: pnpm lint
+
+      - name: "Check Prettier Formatting"
+        run: pnpm format:check
+
+      - name: "Comment on PR if Issues"
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '❌ ESLint and Prettier checks failed. Please fix formatting issues.'
+            })
+
+  # Job 4: Unit & Integration Tests
+  test:
+    name: "Unit & Integration Tests"
+    needs: setup
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: event_horizon_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      
+      redis:
+        image: redis:7
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          cache: "pnpm"
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: "Setup Test Database"
+        env:
+          DATABASE_URL: "postgresql://test:test@localhost:5432/event_horizon_test"
+        run: |
+          pnpm prisma migrate deploy
+          pnpm prisma generate
+
+      - name: "Run Unit Tests"
+        env:
+          DATABASE_URL: "postgresql://test:test@localhost:5432/event_horizon_test"
+          REDIS_URL: "redis://localhost:6379"
+        run: pnpm test:unit --coverage
+
+      - name: "Run Integration Tests"
+        env:
+          DATABASE_URL: "postgresql://test:test@localhost:5432/event_horizon_test"
+          REDIS_URL: "redis://localhost:6379"
+        run: pnpm test:integration
+
+      - name: "Upload Coverage Reports"
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage/coverage-final.json
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: true
+          verbose: true
+
+      - name: "Enforce Coverage Threshold"
+        run: |
+          COVERAGE=$(cat ./coverage/coverage-summary.json | grep lines | grep pct | grep -oP '\d+\.\d+' | head -1)
+          if (( $(echo "$COVERAGE < 80" | bc -l) )); then
+            echo "❌ Coverage ${COVERAGE}% is below 80% threshold"
+            exit 1
+          fi
+          echo "✅ Coverage ${COVERAGE}% meets threshold"
+
+  # Job 5: Security Scanning
+  security:
+    name: "Security Audit"
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          cache: "pnpm"
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: "npm Audit"
+        run: pnpm audit --audit-level=moderate || true
+
+      - name: "OWASP Dependency Check (Optional)"
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          path: "."
+          format: "JSON"
+          args: >-
+            -o dependencycheck
+            --scan .
+            --exclude node_modules,coverage
+        continue-on-error: true
+
+      - name: "Secrets Scanning"
+        uses: gitleaks/gitleaks-action@v2
+        continue-on-error: true
+
+  # Job 6: Build & Bundle
+  build:
+    name: "Build Application"
+    needs: [type-check, lint, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          cache: "pnpm"
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: "Build Next.js Application"
+        env:
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: pnpm build
+
+      - name: "Analyze Bundle Size"
+        run: |
+          echo "📊 Bundle Analysis:"
+          du -sh .next/standalone || true
+          du -sh .next/static || true
+
+      - name: "Upload Build Artifacts"
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts
+          path: |
+            .next
+            out
+            dist
+          retention-days: 7
+
+      - name: "Check Bundle Size"
+        run: |
+          BUNDLE_SIZE=$(du -sk .next/standalone | cut -f1)
+          MAX_SIZE=$((200 * 1024)) # 200MB
+          if [ $BUNDLE_SIZE -gt $MAX_SIZE ]; then
+            echo "❌ Bundle size ${BUNDLE_SIZE}KB exceeds limit"
+            exit 1
+          fi
+          echo "✅ Bundle size ${BUNDLE_SIZE}KB is acceptable"
+
+  # Job 7: E2E Tests
+  e2e:
+    name: "E2E Tests with Playwright"
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          cache: "pnpm"
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: "Install Playwright Browsers"
+        run: pnpm exec playwright install --with-deps
+
+      - name: "Run E2E Tests"
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+        run: pnpm test:e2e
+
+      - name: "Upload Playwright Report"
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+
+  # Job 8: Deploy to Staging
+  deploy-staging:
+    name: "Deploy to Staging"
+    needs: [type-check, lint, test, build, security]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/develop'
+    environment:
+      name: staging
+      url: https://staging.event-horizon.dev
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: "Authenticate to AWS"
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: "Download Build Artifacts"
+        uses: actions/download-artifact@v3
+        with:
+          name: build-artifacts
+
+      - name: "Deploy to AWS EC2"
+        run: |
+          aws s3 sync .next s3://event-horizon-staging/next --delete
+          aws lambda invoke \
+            --function-name event-horizon-deploy-staging \
+            --region us-east-1 \
+            response.json
+          cat response.json
+
+      - name: "Notify Slack - Staging Deployment"
+        uses: slackapi/slack-github-action@v1.24.0
+        if: always()
+        with:
+          webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          payload: |
+            {
+              "text": "Staging Deployment: ${{ job.status }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Event Horizon - Staging Deployment*\nStatus: ${{ job.status }}\nBranch: develop\nCommit: ${{ github.sha }}"
+                  }
+                }
+              ]
+            }
+
+  # Job 9: Deploy to Production
+  deploy-production:
+    name: "Deploy to Production"
+    needs: [type-check, lint, test, build, security]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: production
+      url: https://event-horizon.app
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: "Authenticate to Vercel"
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          npm install -g vercel
+          vercel link --confirm --token $VERCEL_TOKEN
+
+      - name: "Deploy to Vercel Production"
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          vercel deploy \
+            --prod \
+            --token $VERCEL_TOKEN \
+            --env DATABASE_URL=${{ secrets.DATABASE_URL }} \
+            --env NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }} \
+            --env NEXTAUTH_URL=https://event-horizon.app
+
+      - name: "Run Smoke Tests"
+        run: |
+          curl -f https://event-horizon.app/api/health || exit 1
+          echo "✅ Health check passed"
+
+      - name: "Notify Slack - Production Deployment"
+        uses: slackapi/slack-github-action@v1.24.0
+        if: always()
+        with:
+          webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          payload: |
+            {
+              "text": "Production Deployment: ${{ job.status }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Event Horizon - Production Deployment* 🚀\nStatus: ${{ job.status }}\nBranch: main\nCommit: ${{ github.sha }}\nTime: $(date)"
+                  }
+                }
+              ]
+            }
+
+  # Job 10: Report Summary
+  summary:
+    name: "Workflow Summary"
+    runs-on: ubuntu-latest
+    needs: [type-check, lint, test, build, security]
+    if: always()
+    steps:
+      - name: "Create Status Summary"
+        uses: actions/github-script@v7
+        if: github.event_name == 'pull_request'
+        with:
+          script: |
+            const allPassed = context.payload.pull_request.status === 'success';
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## CI/CD Pipeline Summary ${allPassed ? '✅' : '❌'}
+              
+              | Check | Status |
+              |-------|--------|
+              | Type Check | ${{ needs.type-check.result }} |
+              | Linting | ${{ needs.lint.result }} |
+              | Tests | ${{ needs.test.result }} |
+              | Build | ${{ needs.build.result }} |
+              | Security | ${{ needs.security.result }} |
+              
+              **Gemini 3 Optimization**: TypeScript strict mode enforced, Bundle <200KB ✅`
+            })

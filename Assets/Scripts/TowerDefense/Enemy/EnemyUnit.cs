@@ -1,5 +1,7 @@
 using UnityEngine;
 using System;
+using Game.TowerDefense; // Redundant but harmless if in same namespace
+
 
 namespace Game.TowerDefense
 {
@@ -168,6 +170,12 @@ namespace Game.TowerDefense
             
             isDead = true;
             OnDeath?.Invoke(this);
+            
+            // Award credits
+            if (config != null && CurrencyManager.Instance != null)
+            {
+                CurrencyManager.Instance.Add(config.killReward);
+            }
             
             // Visual feedback (optional)
             if (spriteRenderer != null)

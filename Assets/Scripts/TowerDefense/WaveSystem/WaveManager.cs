@@ -310,6 +310,14 @@ namespace Game.TowerDefense
             Debug.Log($"✓ WAVE {wave.waveNumber} COMPLETE\n");
             OnWaveCompleted?.Invoke(wave.waveNumber);
             
+            // Award wave bonus
+            if (CurrencyManager.Instance != null)
+            {
+                int waveBonus = Mathf.RoundToInt(100f * wave.rewardMultiplier);
+                CurrencyManager.Instance.Add(waveBonus);
+                Debug.Log($"[WaveManager] Awarded wave completion bonus: {waveBonus}");
+            }
+            
             // Increment wave index
             currentWaveIndex++;
             

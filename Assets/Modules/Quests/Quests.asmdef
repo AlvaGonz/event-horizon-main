@@ -7,7 +7,8 @@
         "Database",
         "Localization",
         "Diagnostics",
-        "Utilites"
+        "Utilites",
+        "SecurityStub"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

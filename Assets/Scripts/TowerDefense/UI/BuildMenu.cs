@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
-using Game.TowerDefense.Towers;
+using Game.TowerDefense;
 using Game.TowerDefense.Interaction;
 using Game.TowerDefense.Economy;
 

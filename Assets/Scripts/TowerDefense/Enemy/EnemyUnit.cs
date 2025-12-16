@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
-using Game.TowerDefense; // Redundant but harmless if in same namespace
+using Game.TowerDefense;
+using Game.TowerDefense.Economy;
 
 
 namespace Game.TowerDefense

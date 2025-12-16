@@ -1,9 +1,6 @@
 {
-    "name": "SecurityStub",
-    "rootNamespace": "Security",
-    "references": [
-        "UniRx"
-    ],
+    "name": "Utilites",
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

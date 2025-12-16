@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 
-namespace Game.TowerDefense
+namespace Game.TowerDefense.Economy
 {
     /// <summary>
     /// Manages the player's currency (Credits).

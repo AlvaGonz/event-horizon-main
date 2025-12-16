@@ -1,8 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
+using Game.TowerDefense;
 using Game.TowerDefense.Economy;
-using Game.TowerDefense.BaseDefense;
-using Game.TowerDefense.WaveSystem;
 
 namespace Game.TowerDefense.UI
 {

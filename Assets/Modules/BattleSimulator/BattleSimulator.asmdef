@@ -12,7 +12,8 @@
         "GameServices",
         "Diagnostics",
         "Localization",
-        "Utilites"
+        "Utilites",
+        "SecurityStub"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -8,8 +8,8 @@ namespace Combat.Component.Effector
         public void Initialize(int collisionMask, float power)
         {
             Effector.colliderMask = collisionMask;
-            Effector.drag = power;
-            Effector.angularDrag = power;
+            Effector.linearDamping = power;
+            Effector.angularDamping = power;
         }
 
         private AreaEffector2D Effector { get { return _effector ?? (_effector = GetComponent<AreaEffector2D>()); } }

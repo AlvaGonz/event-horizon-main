@@ -27,7 +27,7 @@ namespace Gui.ShipService
         public Image BackgroundImage;
 
         [SerializeField] public int MinBlockSize = 64;
-        [SerializeField] public Vector2 BlockSize { get { return new Vector2(MinBlockSize, MinBlockSize); } }
+        public Vector2 BlockSize { get { return new Vector2(MinBlockSize, MinBlockSize); } }
 
         [SerializeField] public BlockSelectedEvent _onBlockSelected = new BlockSelectedEvent();
 

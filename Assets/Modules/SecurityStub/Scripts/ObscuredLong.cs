@@ -1,5 +1,3 @@
-namespace Security
-{
     // Stub for ObscuredLong to resolve compile errors
     // Matches the pattern of ObscuredInt stub
     public struct ObscuredLong : System.IEquatable<ObscuredLong>, System.IFormattable
@@ -26,4 +24,3 @@ namespace Security
         public override bool Equals(object obj) => obj is ObscuredLong oi && Equals(oi);
         public bool Equals(ObscuredLong other) => value == other.value;
     }
-}

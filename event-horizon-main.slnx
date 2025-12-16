@@ -21,8 +21,10 @@
   <Project Path="Assembly-CSharp-Editor.csproj" />
   <Project Path="Zenject-PoolMonitor-Editor.csproj" />
   <Project Path="AppConfiguration.csproj" />
+  <Project Path="Utilites.csproj" />
   <Project Path="GameSession.Tests.csproj" />
   <Project Path="Database.Tests.csproj" />
   <Project Path="ResourceLocator.csproj" />
   <Project Path="CommonComponents.Tests.csproj" />
+  <Project Path="Localization.csproj" />
 </Solution>

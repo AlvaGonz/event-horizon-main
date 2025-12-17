@@ -1,47 +1,87 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Services.Gui
 {
     public interface IGuiManager
     {
-        void OpenWindow(string windowName, object args = null, Action<WindowExitCode> callback = null);
-        void CloseWindow(string windowName); // Hypothesized
+        bool AutoWindowsAllowed { get; set; }
+        void OpenWindow(string windowName, object args = null, Action<Gui.Windows.WindowExitCode> callback = null);
+        void CloseWindow(string windowName);
+        void CloseAllWindows();
     }
 
     public class WindowArgs
     {
+        public int Count => 0;
         public WindowArgs(params object[] args) { }
-    }
-
-    public enum WindowExitCode
-    {
-        Ok,
-        Cancel,
-        None
+        public T Get<T>(int index) => default(T);
+        public bool TryGet<T>(int index, out T value) { value = default(T); return false; }
     }
 }
 
 namespace Gui
 {
-    public interface IWindow { }
+    public interface IWindow 
+    {
+        bool Enabled { get; set; }
+        bool IsVisible { get; }
+        void Open(object args = null);
+        void Close();
+    }
+    public interface IContentFiller { }
+    
+    public class ListScrollRect : UnityEngine.MonoBehaviour 
+    {
+        public void RefreshContent() { }
+        public void ScrollToListItem(int index) { }
+    }
     
     public class AnimatedWindow : UnityEngine.MonoBehaviour, IWindow 
     {
-        public void Close() { }
+        public System.Action OnInitializedEvent;
+        public bool Enabled { get; set; }
+        public bool IsVisible => true;
+        public virtual void Close() { }
+        public void Open(object args = null) { }
     }
-    public class ListScrollRect : UnityEngine.MonoBehaviour { }
     
-    public interface IContentFiller { }
+    public class DebugConsole : UnityEngine.MonoBehaviour { } // Stub for DebugConsole
 
     namespace Theme
     {
-        public class ThemeColor : UnityEngine.MonoBehaviour { }
+    public class ThemeColor : UnityEngine.MonoBehaviour 
+        {
+            public static Color Window => Color.white;
+            public static Color BackgroundDark => Color.black;
+            public static Color Text => Color.white;
+            public static Color ErrorText => Color.red;
+            public static Color HeaderText => Color.yellow;
+            public static Color Icon => Color.white;
+        }
+
+        public class UiTheme : UnityEngine.MonoBehaviour
+        {
+            public static UiTheme Current => null;
+            public Color GetQualityColor(object quality) => Color.white;
+        }
+
+        public class UiThemeLoader { } // Stub for UiThemeLoader missing error
     }
 
     namespace Windows
     {
-        // Stubs for types/namespaces used as 'using Gui.Windows;'
+        public enum WindowExitCode
+        {
+            Ok,
+            Cancel,
+            None,
+            Option1, // Added for MainMenu usage
+            Option2  // Added for MainMenu usage
+        }
+
+        public class AnimatedWindow : Gui.AnimatedWindow { }
     }
 
     namespace Notifications
@@ -72,4 +112,41 @@ namespace Gui.Components
     // Possible location for ListScrollRect if not in root
 }
 
-// Global scope stubs if needed, but handled by namespaces above.
+public static class GuiExtensions
+{
+    public static void InitializeElements(this UnityEngine.Transform transform) { }
+}
+
+namespace ShipEditor.Context
+{
+    public class DatabaseEditorContext : IShipEditorContext 
+    {
+        public DatabaseEditorContext(Constructor.Ships.IShip ship) { }
+        // Implement interface members as needed (stubs)
+        public Constructor.Ships.IShip Ship => null;
+        public IInventoryProvider Inventory => null;
+        public IShipDataProvider ShipDataProvider => null;
+        public bool IsShipNameEditable => false;
+        public IShipPresetStorage ShipPresetStorage => null;
+        public IComponentUpgradesProvider UpgradesProvider => null;
+        public bool CanBeUnlocked(GameDatabase.DataModel.Component component) => true;
+    }
+    
+    public class EmptyDataProvider : IShipDataProvider 
+    {
+         // Stubs
+    }
+}
+
+// Signals
+public class WindowOpenedSignal { }
+public class WindowClosedSignal { }
+public class WindowDestroyedSignal { }
+
+// Managers
+public class GuiManager { }
+public class LocalizationManager { }
+public class KeyNameLocalizer { }
+
+// ItemId generic stub
+public struct ItemId<T> { }

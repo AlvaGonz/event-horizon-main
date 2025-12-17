@@ -4,6 +4,7 @@ using Gui.Windows;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
+using Gui;
 
 namespace ViewModel
 {
@@ -13,7 +14,7 @@ namespace ViewModel
 	    [Inject] private readonly OpenShipEditorSignal.Trigger _openEditorTrigger;
 
 		public GameObject ShipButtonPrefab;
-		public AnimatedWindow CompanionPanel;
+		public Gui.Windows.AnimatedWindow CompanionPanel;
 		public ToggleGroup CompanionToggleGroup;
 
 		public void OnShipSelected()

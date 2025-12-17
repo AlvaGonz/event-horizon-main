@@ -4,6 +4,7 @@ using GameServices.Player;
 using Gui.Windows;
 using Services.Gui;
 using Zenject;
+using Gui;
 
 namespace ViewModel
 {
@@ -12,7 +13,7 @@ namespace ViewModel
         [Inject] private readonly MotherShip _motherShip;
         [Inject] private readonly InventoryFactory _factory;
 
-        [SerializeField] private AnimatedWindow _storeWindow;
+        [SerializeField] private Gui.Windows.AnimatedWindow _storeWindow;
 
         public GameObject AttackButton;
 

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Game.TowerDefense
+namespace Game.TowerDefense.Towers
 {
     /// <summary>
     /// Projectile tower - fires projectiles that travel to target

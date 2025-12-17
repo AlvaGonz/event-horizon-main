@@ -23,8 +23,8 @@
   <Project Path="AppConfiguration.csproj" />
   <Project Path="Utilites.csproj" />
   <Project Path="GameSession.Tests.csproj" />
+  <Project Path="Localization.csproj" />
   <Project Path="Database.Tests.csproj" />
   <Project Path="ResourceLocator.csproj" />
   <Project Path="CommonComponents.Tests.csproj" />
-  <Project Path="Localization.csproj" />
 </Solution>

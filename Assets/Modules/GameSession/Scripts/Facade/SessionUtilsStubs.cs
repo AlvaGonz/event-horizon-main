@@ -263,6 +263,34 @@ namespace Session.Utils
 
         public IEnumerator<KeyValuePair<T, int>> GetEnumerator() => _items.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        public void Clear()
+        {
+            _items.Clear();
+            _callback?.OnDataChanged();
+        }
+
+        public bool Remove(T item)
+        {
+            bool removed = _items.Remove(item);
+            if (removed) _callback?.OnDataChanged();
+            return removed;
+        }
+
+        public int this[T key]
+        {
+            get => _items.ContainsKey(key) ? _items[key] : 0;
+            set
+            {
+                _items[key] = value;
+                _callback?.OnDataChanged();
+            }
+        }
+        
+        public void SetValue(T key, int value)
+        {
+            this[key] = value;
+        }
     }
 
     // Serialization Stubs

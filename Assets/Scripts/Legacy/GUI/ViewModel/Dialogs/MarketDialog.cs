@@ -14,6 +14,7 @@ using Services.Localization;
 using Services.Messenger;
 using Services.Resources;
 using Zenject;
+using Gui;
 using CommonComponents;
 
 namespace ViewModel

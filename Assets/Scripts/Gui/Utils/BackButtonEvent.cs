@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 using Zenject;
+using CommonComponents.Signals;
 
 namespace Gui.Utils
 {

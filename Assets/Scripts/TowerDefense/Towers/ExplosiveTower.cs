@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace Game.TowerDefense
+namespace Game.TowerDefense.Towers
 {
     /// <summary>
     /// Explosive tower - area of effect damage

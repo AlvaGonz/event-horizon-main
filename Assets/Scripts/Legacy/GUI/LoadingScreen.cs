@@ -8,6 +8,7 @@ using Services.Localization;
 using Services.Resources;
 using Services.Settings;
 using Zenject;
+using CommonComponents.Signals;
 
 public class LoadingScreen : MonoBehaviour
 {

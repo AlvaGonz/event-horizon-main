@@ -9,6 +9,7 @@ using Services.Audio;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
+using Gui;
 using AudioClip = UnityEngine.AudioClip;
 using ComponentInfo = Constructor.ComponentInfo;
 

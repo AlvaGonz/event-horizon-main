@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Economy;
 using Zenject;
+using Gui;
 
 namespace ViewModel
 {

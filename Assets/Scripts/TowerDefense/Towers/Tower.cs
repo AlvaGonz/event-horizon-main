@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Game.TowerDefense
+namespace Game.TowerDefense.Towers
 {
     /// <summary>
     /// Abstract base class for all tower types
@@ -126,7 +126,12 @@ namespace Game.TowerDefense
         // ===== COMBAT (Abstract - implemented by subclasses) =====
         protected abstract void Fire();
         
-        // ===== UPGRADE SYSTEM =====
+        // ===== INITIALIZATION =====
+        public void Initialize(EnemyUnit target, float damage, float speed)
+        {
+             // Stub or implementation if needed
+        }
+        
         public bool Upgrade()
         {
             if (!CanUpgrade)

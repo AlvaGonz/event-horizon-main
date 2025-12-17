@@ -5,6 +5,7 @@ using Gui.Combat;
 using Services.Audio;
 using Services.Gui;
 using Zenject;
+using CommonComponents.Signals;
 
 namespace GameStateMachine.States
 {

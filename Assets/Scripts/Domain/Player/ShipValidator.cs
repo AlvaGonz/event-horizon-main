@@ -4,14 +4,15 @@ using Constructor.Extensions;
 using Constructor.Model;
 using Constructor.Ships;
 using GameDatabase.DataModel;
-using ShipEditor.Model;
+using IntegratedComponent = Constructor.IntegratedComponent;
+using ComponentInfo = Constructor.ComponentInfo;
 
 namespace Domain.Shipyard
 {
     public interface IShipPartsStorage
     {
         public void AddComponent(ComponentInfo component);
-        public void AddSatellite(Satellite satellite);
+        public void AddSatellite(Constructor.Satellites.Satellite satellite);
         public bool TryGetComponentReplacement(ComponentInfo original, out ComponentInfo replacement);
     }
 

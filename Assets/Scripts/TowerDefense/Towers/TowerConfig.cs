@@ -9,6 +9,7 @@ namespace Game.TowerDefense
     public class TowerConfig : ScriptableObject
     {
         [Header("Identity")]
+        public GameObject prefab;
         public string towerName = "Basic Tower";
         public string description = "A basic defensive tower";
         

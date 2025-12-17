@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Game.TowerDefense
+namespace Game.TowerDefense.Towers
 {
     /// <summary>
     /// Laser tower - instant hit with LineRenderer beam

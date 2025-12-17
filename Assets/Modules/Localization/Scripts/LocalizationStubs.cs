@@ -7,5 +7,7 @@ namespace Services.Localization
         string GetText(string key);
         string GetText(string key, params object[] args);
         string Localize(string key);
+        void LoadLocalizationList(object list);
+        void Initialize();
     }
 }

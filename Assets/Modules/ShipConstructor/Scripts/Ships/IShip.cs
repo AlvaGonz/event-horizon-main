@@ -3,6 +3,7 @@ using GameDatabase.DataModel;
 using GameDatabase.Enums;
 using GameDatabase.Model;
 using CommonComponents.Utils;
+using Constructor;
 
 namespace Constructor.Ships
 {

@@ -4,6 +4,7 @@ using Services.Resources;
 using UnityEngine.UI;
 using UnityEngine;
 using Zenject;
+using Gui;
 
 namespace ViewModel
 {

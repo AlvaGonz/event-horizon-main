@@ -3,6 +3,7 @@ using GameModel.Quests;
 using GameServices.SceneManager;
 using Gui.Combat;
 using Services.Gui;
+using Gui.Windows;
 using Zenject;
 
 namespace GameStateMachine.States

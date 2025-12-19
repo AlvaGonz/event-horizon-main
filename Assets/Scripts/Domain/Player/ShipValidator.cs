@@ -12,7 +12,7 @@ namespace Domain.Shipyard
     public interface IShipPartsStorage
     {
         public void AddComponent(ComponentInfo component);
-        public void AddSatellite(Constructor.Satellites.Satellite satellite);
+        public void AddSatellite(Satellite satellite);
         public bool TryGetComponentReplacement(ComponentInfo original, out ComponentInfo replacement);
     }
 

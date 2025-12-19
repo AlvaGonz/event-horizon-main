@@ -2,12 +2,7 @@ using System;
 
 namespace Gui.Windows
 {
-    public enum WindowExitCode
-    {
-        Ok,
-        Cancel,
-        Error
-    }
+
 
     public static class Window
     {

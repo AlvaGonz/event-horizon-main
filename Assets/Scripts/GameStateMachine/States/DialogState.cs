@@ -2,6 +2,7 @@
 using GameServices.SceneManager;
 using Scripts.GameStateMachine;
 using Services.Gui;
+using Gui.Windows;
 using Zenject;
 
 namespace GameStateMachine.States

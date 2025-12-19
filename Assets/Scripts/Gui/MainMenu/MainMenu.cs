@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using GameStateMachine.States;
+using Gui.Windows; // Added for WindowExitCode
 using Services.Gui;
 using Services.Messenger;
 using Session;

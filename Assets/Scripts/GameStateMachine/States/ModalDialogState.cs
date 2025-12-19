@@ -3,6 +3,7 @@ using System.Linq;
 using GameServices.SceneManager;
 using Services.GameApplication;
 using Services.Gui;
+using Gui.Windows;
 
 namespace GameStateMachine.States
 {

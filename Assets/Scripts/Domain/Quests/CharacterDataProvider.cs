@@ -13,6 +13,6 @@ namespace Domain.Quests
             _session = session;
         }
 
-        public int GetCharacterAttitude(ItemId<Character> id) => _session.Quests.GetCharacterRelations(id.Value);
+        public int GetCharacterAttitude(GameDatabase.Model.ItemId<Character> id) => _session.Quests.GetCharacterRelations(id.Value);
     }
 }

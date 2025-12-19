@@ -7,7 +7,7 @@ namespace Services.Gui
     public interface IGuiManager
     {
         bool AutoWindowsAllowed { get; set; }
-        void OpenWindow(string windowName, object args = null, Action<Gui.Windows.WindowExitCode> callback = null);
+        void OpenWindow(string windowName, object args = null, Action<global::Gui.Windows.WindowExitCode> callback = null);
         void CloseWindow(string windowName);
         void CloseAllWindows();
     }
@@ -117,26 +117,7 @@ public static class GuiExtensions
     public static void InitializeElements(this UnityEngine.Transform transform) { }
 }
 
-namespace ShipEditor.Context
-{
-    public class DatabaseEditorContext : IShipEditorContext 
-    {
-        public DatabaseEditorContext(Constructor.Ships.IShip ship) { }
-        // Implement interface members as needed (stubs)
-        public Constructor.Ships.IShip Ship => null;
-        public IInventoryProvider Inventory => null;
-        public IShipDataProvider ShipDataProvider => null;
-        public bool IsShipNameEditable => false;
-        public IShipPresetStorage ShipPresetStorage => null;
-        public IComponentUpgradesProvider UpgradesProvider => null;
-        public bool CanBeUnlocked(GameDatabase.DataModel.Component component) => true;
-    }
-    
-    public class EmptyDataProvider : IShipDataProvider 
-    {
-         // Stubs
-    }
-}
+
 
 // Signals
 public class WindowOpenedSignal { }

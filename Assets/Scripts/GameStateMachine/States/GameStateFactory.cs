@@ -1,5 +1,6 @@
 ﻿using Combat.Domain;
 using Services.Gui;
+using Gui.Windows;
 using Domain.Quests;
 using Game.Exploration;
 using GameModel.Quests;

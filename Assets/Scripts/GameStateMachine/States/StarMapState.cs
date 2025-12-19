@@ -11,6 +11,7 @@ using Services.Gui;
 using Services.Audio;
 using Constructor.Ships;
 using Domain.Quests;
+using Gui.Windows;
 using Game.Exploration;
 using GameDatabase.DataModel;
 using GameModel.Quests;

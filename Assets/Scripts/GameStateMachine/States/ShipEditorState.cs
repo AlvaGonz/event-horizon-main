@@ -15,6 +15,7 @@ using Session;
 using GameDatabase;
 using System.Linq;
 using System;
+using ContextUpgradesProvider = ShipEditor.Context.IComponentUpgradesProvider;
 
 namespace GameStateMachine.States
 {
@@ -87,7 +88,7 @@ namespace GameStateMachine.States
             public IShipDataProvider ShipDataProvider => new EmptyDataProvider();
             public bool IsShipNameEditable => true;
             public IShipPresetStorage ShipPresetStorage { get; }
-            public IComponentUpgradesProvider UpgradesProvider { get; }
+            public ContextUpgradesProvider UpgradesProvider { get; }
 
             public bool CanBeUnlocked(Component component)
             {
@@ -98,7 +99,7 @@ namespace GameStateMachine.States
 			}
 		}
 
-        private class UpgradesProvider : IComponentUpgradesProvider
+        private class UpgradesProvider : ContextUpgradesProvider
         {
             public IEnumerable<ComponentUpgradeLevel> GetAllUpgrades() => Enumerable.Empty<ComponentUpgradeLevel>();
             public IComponentUpgrades GetComponentUpgrades(Component component) => null;

@@ -3,6 +3,7 @@ using GameServices.SceneManager;
 using Domain.Quests;
 using GameDatabase.Enums;
 using Services.Gui;
+using Gui.Windows;
 using Zenject;
 
 namespace GameStateMachine.States
